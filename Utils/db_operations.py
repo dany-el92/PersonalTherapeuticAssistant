@@ -179,6 +179,107 @@ class Database:
         document = {"tag": tag, "responses": responses}
         self.insert_document('responses', document)
 
+    def delete_documents_by_tag(self, collection_name, tag):
+        """
+        Cancella i documenti da una collezione specificata in base a un tag.
+
+        Args:
+            collection_name (str): Il nome della collezione da cui cancellare i documenti.
+            tag (str): Il tag per filtrare i documenti.
+        """
+        try:
+            collection = self.db[collection_name]
+            collection.delete_many({"tag": tag})
+        except Exception as e:
+            print(f"Error deleting documents by tag: {e}")
+
+    def delete_all_documents(self, collection_name):
+        """
+        Cancella tutti i documenti da una collezione specificata.
+
+        Args:
+            collection_name (str): Il nome della collezione da cui cancellare i documenti.
+        """
+        try:
+            collection = self.db[collection_name]
+            collection.delete_many({})
+        except Exception as e:
+            print(f"Error deleting all documents: {e}")
+
+    def delete_specific_response(self, tag, response):
+        """
+        Elimina una risposta specifica da un documento con un determinato tag.
+
+        Args:
+            tag (str): Il tag del documento.
+            response (str): La risposta da eliminare.
+        """
+        try:
+            collection = self.db['responses']
+            collection.update_one({"tag": tag}, {"$pull": {"responses": response}})
+        except Exception as e:
+            print(f"Error deleting specific response: {e}")
+
+    def delete_specific_pattern(self, tag, pattern):
+        """
+        Elimina un pattern specifico da un documento con un determinato tag.
+
+        Args:
+            tag (str): Il tag del documento.
+            pattern (str): Il pattern da eliminare.
+        """
+        try:
+            collection = self.db['patterns']
+            collection.update_one({"tag": tag}, {"$pull": {"patterns": pattern}})
+        except Exception as e:
+            print(f"Error deleting specific pattern: {e}")
+
+    def update_document_by_tag(self, collection_name, tag, new_document):
+        """
+        Aggiorna un documento in una collezione specificata in base a un tag.
+
+        Args:
+            collection_name (str): Il nome della collezione in cui aggiornare il documento.
+            tag (str): Il tag del documento da aggiornare.
+            new_document (dict): Il nuovo documento.
+        """
+        try:
+            collection = self.db[collection_name]
+            collection.update_one({"tag": tag}, {"$set": new_document})
+        except Exception as e:
+            print(f"Error updating document by tag: {e}")
+
+    def update_specific_response(self, tag, response, new_response):
+        """
+        Aggiorna una risposta specifica da un documento con un determinato tag.
+
+        Args:
+            tag (str): Il tag del documento.
+            response (str): La risposta da aggiornare.
+            new_response (str): La nuova risposta.
+        """
+        try:
+            collection = self.db['responses']
+            collection.update_one({"tag": tag, "responses": response}, {"$set": {"responses.$": new_response}})
+        except Exception as e:
+            print(f"Error updating specific response: {e}")
+
+    def update_specific_pattern(self, tag, pattern, new_pattern):
+        """
+        Aggiorna un pattern specifico da un documento con un determinato tag.
+
+        Args:
+            tag (str): Il tag del documento.
+            pattern (str): Il pattern da aggiornare.
+            new_pattern (str): Il nuovo pattern.
+        """
+        try:
+            collection = self.db['patterns']
+            collection.update_one({"tag": tag, "patterns": pattern}, {"$set": {"patterns.$": new_pattern}})
+        except Exception as e:
+            print(f"Error updating specific pattern: {e}")
+
+
 
 # Esempio di utilizzo delle funzioni
 if __name__ == "__main__":
@@ -188,14 +289,37 @@ if __name__ == "__main__":
     # Esempio di select
     # print(db.get_all_patterns())
     # print(db.get_all_responses())
-    print(db.get_patterns_by_tag('test_tag'))
-    print(db.get_responses_by_tag('test_tag'))
-
-    # Esempio di covered query
-    print(db.get_documents_by_tag_covered('patterns', 'greeting'))
-
-    # Esempio di insert
+    # print(db.get_patterns_by_tag('goodbye'))
+    # print(db.get_responses_by_tag('goodbye'))
+    #
+    # # Esempio di covered query
+    # print(db.get_documents_by_tag_covered('patterns', 'greeting'))
+    #
+    # # Esempio di insert
     # db.insert_pattern('test_tag2', ['Hello', 'Hi'])
     # db.insert_response('test_tag2', ['Hello there!', 'Hi!'])
 
     # DA CANCELLARE patter e response con test_tag e test_tag2
+
+    # Esempio di delete
+    # db.delete_documents_by_tag('patterns', 'test_tag2')
+    # db.delete_documents_by_tag('responses', 'test_tag2')
+
+    # Esempio di delete all
+    # db.delete_all_documents('patterns')
+    # db.delete_all_documents('responses')
+
+    # Esempio di delete specific
+    # db.delete_specific_response('test_tag2', 'Hi!')
+    # db.delete_specific_pattern('test_tag2', 'Hello')
+
+    # Esempio di update
+    # db.update_document_by_tag('patterns', 'test_tag2', {'tag': 'test_tag2', 'patterns': ['Hello', 'Hi!']})
+    # db.update_document_by_tag('responses', 'test_tag2', {'tag': 'test_tag2', 'responses': ['Hello there!', 'Hi!']})
+
+    # Esempio di update specific
+    # db.update_specific_response('test_tag2', 'Hi!', 'Hi :)')
+    # db.update_specific_pattern('test_tag2', 'Hello', 'Hello there')
+
+
+
