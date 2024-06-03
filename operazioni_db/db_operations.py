@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 
-
 class Database:
     """
     Classe per gestire la connessione e le operazioni su un database MongoDB per un chatbot.
@@ -279,6 +278,45 @@ class Database:
         except Exception as e:
             print(f"Error updating specific pattern: {e}")
 
+    def text_search(self, text, collection_name):
+        """
+        Trova il tag associato a un testo specifico cercandolo nei patterns o nelle responses del dataset.
+
+        Args:
+            text (str): Il testo da cercare nei patterns o nelle responses.
+            collection_name (str): Il nome della collezione in cui cercare ("patterns" o "responses").
+
+        Returns:
+            str: Il tag associato al testo, oppure None se il testo non è trovato.
+        """
+        try:
+            # Controllo che il nome della collezione sia valido
+            if collection_name not in ["patterns", "responses"]:
+                raise ValueError("Collection name must be 'patterns' or 'responses'")
+
+            collection = self.db[collection_name]
+
+            # Suddivido il testo in parole e le converto in minuscolo
+            words = text.lower().split()
+
+            for document in collection.find():
+                # Suddivido i pattern in parole e le converto in minuscolo
+                pattern_words = [pattern.lower().split() for pattern in document.get(collection_name, [])]
+
+                # Unisco le parole dei pattern in un'unica lista
+                pattern_words = [word for sublist in pattern_words for word in sublist]
+
+                # Calcolo la percentuale di parole corrispondenti tra il testo e i pattern
+                matching_words = [word for word in words if word in pattern_words]
+                percentage = len(matching_words) / len(words) * 100
+
+                if percentage >= 90:
+                    return document["tag"]
+
+            return None
+        except Exception as e:
+            print(f"Error finding tag for text '{text}' in collection '{collection_name}': {e}")
+            return None
 
 
 # Esempio di utilizzo delle funzioni
@@ -289,7 +327,7 @@ if __name__ == "__main__":
     # Esempio di select
     # print(db.get_all_patterns())
     # print(db.get_all_responses())
-    # print(db.get_patterns_by_tag('goodbye'))
+    # print(db.get_patterns_by_tag('about'))
     # print(db.get_responses_by_tag('goodbye'))
     #
     # # Esempio di covered query
@@ -320,6 +358,10 @@ if __name__ == "__main__":
     # Esempio di update specific
     # db.update_specific_response('test_tag2', 'Hi!', 'Hi :)')
     # db.update_specific_pattern('test_tag2', 'Hello', 'Hello there')
+
+    # Esempio di text search
+    print(db.text_search('No one', 'patterns'))
+    print(db.text_search('I was trained', 'responses'))
 
 
 
