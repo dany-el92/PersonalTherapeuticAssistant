@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 
+
 class Database:
     """
     Classe per gestire la connessione e le operazioni su un database MongoDB per un chatbot.
@@ -360,8 +361,5 @@ if __name__ == "__main__":
     # db.update_specific_pattern('test_tag2', 'Hello', 'Hello there')
 
     # Esempio di text search
-    print(db.text_search('No one', 'patterns'))
-    print(db.text_search('I was trained', 'responses'))
-
-
-
+    print(db.text_search('not ok', 'patterns'))
+    print(db.text_search('not ok', 'responses'))
