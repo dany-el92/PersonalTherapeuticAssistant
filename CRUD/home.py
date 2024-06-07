@@ -39,31 +39,31 @@ for frame in (main_frame, create_frame, delete_frame, retrieve_frame, update_fra
 
 # Configura la schermata principale
 main_label = tk.Label(main_frame, text="Operazioni CRUD", font=header_font, bg="#2C3E50")
-main_label.pack(padx=20, pady=10, anchor='center')
+main_label.pack(padx=20, pady=50, anchor='s')
 
 button_frame = tk.Frame(main_frame, bg="#2C3E50")
-button_frame.pack(pady=170, padx=110)
+button_frame.pack(pady=20, padx=10)
 
 # Buttons
 button_options = {
     "font": ("Helvetica", 14),
     "bd": 0,
     "bg": "white",
-    "padx": 20,
-    "pady": 10,
+    "padx": 40,
+    "pady": 20,
 }
 
 create_button = tk.Button(button_frame, text="Create", command=lambda: show_frame(create_frame), **button_options)
-create_button.grid(row=0, column=0, padx=10, pady=10)
+create_button.grid(row=0, column=0, padx=40, pady=50)
 
 delete_button = tk.Button(button_frame, text="Delete", command=lambda: show_frame(delete_frame), **button_options)
-delete_button.grid(row=0, column=1, padx=10, pady=10)
+delete_button.grid(row=0, column=1, padx=40, pady=50)
 
 retrieve_button = tk.Button(button_frame, text="Retrieve", command=lambda: show_frame(retrieve_frame), **button_options)
-retrieve_button.grid(row=1, column=0, padx=10, pady=10)
+retrieve_button.grid(row=1, column=0, padx=40, pady=50)
 
 update_button = tk.Button(button_frame, text="Update", command=lambda: show_frame(update_frame), **button_options)
-update_button.grid(row=1, column=1, padx=10, pady=10)
+update_button.grid(row=1, column=1, padx=40, pady=50)
 
 # Configura le altre schermate
 create_screen(create_frame, lambda: show_frame(main_frame))
