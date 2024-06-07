@@ -1,84 +1,115 @@
 import tkinter as tk
+from tkinter import ttk
 from operazioni_db.db_operations import Database
 from tkinter import messagebox
+import platform
 
 def create_screen(frame, show_main_frame):
-    # Configuro il frame per espandersi
-    frame.grid_rowconfigure(0, weight=3)
-    frame.grid_columnconfigure(0, weight=3)
+    frame.configure(bg="#2C3E50")
 
-    # Creo un canvas all'interno del frame
-    canvas = tk.Canvas(frame)
-    canvas.grid(row=0, column=0, sticky='nsew')
+    label = tk.Label(frame, text="Create Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="white")
+    label.pack(pady=20)
 
+    # Crea un canvas all'interno del frame
+    canvas = tk.Canvas(frame, bg="#2C3E50", bd=0, highlightthickness=0)
+    canvas.pack(side='left', fill='both', expand=True, padx=10, pady=10)
+
+    # Aggiungi una scrollbar al frame
     scrollbar = tk.Scrollbar(frame, command=canvas.yview)
-    scrollbar.grid(row=0, column=1, sticky='ns')
+    scrollbar.pack(side='right', fill='y')
 
     canvas['yscrollcommand'] = scrollbar.set
 
-    # Creo un frame all'interno del canvas per contenere i widget
-    inner_frame = tk.Frame(canvas)
+    # Crea un frame interno al canvas per contenere i widget
+    inner_frame = tk.Frame(canvas, bg="#2C3E50")
     canvas.create_window((0, 0), window=inner_frame, anchor='nw')
 
-    # Aggiorno la dimensione del canvas quando il frame interno cambia
+    # Aggiorna la dimensione del canvas quando il frame interno cambia
     inner_frame.bind('<Configure>', lambda event: canvas.configure(scrollregion=canvas.bbox('all')))
 
-    # Configuro il frame interno per espandersi
-    inner_frame.grid_rowconfigure(0, weight=1)
-    inner_frame.grid_columnconfigure(0, weight=1)
+    # Centra gli elementi all'interno del frame
+    inner_content_frame = tk.Frame(inner_frame, bg="#2C3E50")
+    inner_content_frame.pack(expand=True, pady=10)
 
-    # Category
-    category_label = tk.Label(inner_frame, text="Category")
-    category_label.grid(row=0, column=0, sticky='w')
+    # Imposta altezza del canvas in base al contenuto
+    canvas_height = inner_content_frame.winfo_reqheight()
+    canvas.config(height=canvas_height)
 
-    category_var = tk.StringVar(inner_frame)
-    category_var.set("patterns")  # default value
+    # Imposta altezza della scrollbar
+    scrollbar.config(command=canvas.yview, orient="vertical")
 
-    category_options = tk.OptionMenu(inner_frame, category_var, "patterns", "responses")
-    category_options.grid(row=0, column=1, sticky='ew')
+    # Categoria
+    category_label = tk.Label(inner_content_frame, text="Category", bg="#2C3E50", fg="white")
+    category_label.pack(side='top', pady=(0, 5), padx=(90, 0))
+
+    category_var = tk.StringVar(inner_content_frame)
+    category_var.set("patterns")  # valore predefinito
+
+    category_options = tk.OptionMenu(inner_content_frame, category_var, "patterns", "responses")
+    category_options.config(width=10)  # Imposta la larghezza del menu a tendina
+    category_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Tag
-    tag_label = tk.Label(inner_frame, text="Tag")
-    tag_label.grid(row=1, column=0, sticky='w')
+    tag_label = tk.Label(inner_content_frame, text="Tag", bg="#2C3E50", fg="white", width=10)
+    tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
-    tag_entry = tk.Entry(inner_frame)
-    tag_entry.grid(row=1, column=1, sticky='ew')
+    tag_entry = tk.Entry(inner_content_frame, bg="white", fg="black", width=10)
+    tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
-    # Description
-    description_label = tk.Label(inner_frame, text="Description")
-    description_label.grid(row=2, column=0, sticky='nw')
+    # Descrizione
+    description_label = tk.Label(inner_content_frame, text="Description", bg="#2C3E50", fg="white")
+    description_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
-    description_text = tk.Text(inner_frame, height=3, width=30)
-    description_text.grid(row=2, column=1, sticky='ew')
+    description_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
+    description_frame.pack(side='top', fill='x')
+
+    description_text = tk.Text(description_frame, height=3, width=40, bg="white", fg="black")
+    description_text.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Lista di caselle di testo per la descrizione
     description_boxes = [description_text]
 
     # Bottone per aggiungere una nuova casella di testo per la descrizione
-    add_button = tk.Button(inner_frame, text="+", command=lambda: add_description_box(inner_frame, description_boxes))
-    add_button.grid(row=3, column=1, sticky='ew')
+    add_button = tk.Button(inner_content_frame, text="+", command=lambda: add_description_box(description_frame, description_boxes),
+                           bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+    add_button.pack(side='left', pady=(0, 10), padx=(90, 0))
 
-    # Variabile per tenere traccia del numero di caselle di testo per la descrizione
-    inner_frame.description_box_count = 1
+    button_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
+    button_frame.pack(side='top', fill='x', pady=20, padx=(90, 0))
 
-    button_frame = tk.Frame(inner_frame)
-    button_frame.grid(row=1000, column=0, columnspan=2, sticky='ew')
+    # Pulsanti
+    back_button_options = {
+        "font": ("Helvetica", 10),
+        "bd": 0,
+        "bg": "white",
+        "fg": "black",
+        "padx": 0,
+        "pady": 0,
+        "highlightthickness": 0,
+        "activebackground": "white"
+    }
 
-    back_button = tk.Button(button_frame, text="Return to the home screen", command=show_main_frame)
-    back_button.pack(side='bottom', anchor='center')
+    back_button = tk.Button(frame, text="⬅", **back_button_options,
+                            command=lambda: [reset_screen(category_var, tag_entry, description_boxes, inner_frame),
+                            show_main_frame()])
+    back_button.place(x=5, y=5)
 
-    submit_button = tk.Button(button_frame, text="Submit", command=lambda: submit_data(category_var, tag_entry, description_boxes, show_main_frame, inner_frame))
-    submit_button.pack(side='bottom', anchor='center')
+    submit_button = tk.Button(button_frame, text="Submit", command=lambda: submit_data(category_var, tag_entry, description_boxes, show_main_frame, inner_frame),
+                              bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+    submit_button.pack(side='right', padx=10)
 
-def add_description_box(frame, description_boxes):
-    # Incremento il contatore
-    frame.description_box_count += 1
+    # Abilita lo scorrimento del canvas con il touchpad
+    if platform.system() == 'Windows':
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int((event.delta / 120) * 2), "units"))
+    elif platform.system() == 'Darwin':
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int(event.delta), "units"))
 
-    # Aggiungo una nuova casella di testo per la descrizione
-    additional_description_text = tk.Text(frame, height=3, width=30)
-    additional_description_text.grid(row=2 + frame.description_box_count, column=1, sticky='ew')
+def add_description_box(description_frame, description_boxes):
+    # Aggiungi una nuova casella di testo per la descrizione
+    additional_description_text = tk.Text(description_frame, height=3, width=20, bg="white", fg="black")
+    additional_description_text.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
-    # Aggiungo la nuova casella di testo alla lista
+    # Aggiungi la nuova casella di testo alla lista
     description_boxes.append(additional_description_text)
 
 def submit_data(category_var, tag_entry, description_boxes, show_main_frame, inner_frame):
@@ -86,8 +117,7 @@ def submit_data(category_var, tag_entry, description_boxes, show_main_frame, inn
 
     category = category_var.get()
     tag = tag_entry.get()
-    descriptions = [box.get("1.0", tk.END).strip() for box in description_boxes]  # Get text from each description box
-    # print(category, tag, descriptions)
+    descriptions = [box.get("1.0", tk.END).strip() for box in description_boxes]  # Ottieni il testo da ciascuna casella di testo della descrizione
 
     if not category or not tag or not all(descriptions):
         messagebox.showinfo("Error", "All fields must be filled")
@@ -98,29 +128,21 @@ def submit_data(category_var, tag_entry, description_boxes, show_main_frame, inn
     else:
         db.insert_response(tag, descriptions)
 
-    # Pulisco la schermata
+    # Pulisci lo schermo
     reset_screen(category_var, tag_entry, description_boxes, inner_frame)
 
-    # Torno alla schermata principale
+    # Torna alla schermata principale
     show_main_frame()
 
 def reset_screen(category_var, tag_entry, description_boxes, inner_frame):
-    # Pulizia e reset delle variabili
+    # Pulisci e resetta le variabili
     category_var.set("patterns")
     tag_entry.delete(0, tk.END)
 
     # Riferimento alla prima casella di testo per la descrizione
     first_description_box = description_boxes[0]
 
-    # Pulizia e rimozione delle caselle di testo per la descrizione
+    # Pulisci e rimuovi le caselle di testo per la descrizione
     for box in description_boxes[1:]:
         box.destroy()
-    description_boxes.clear()
-
-    # Pulizia della prima casella di testo per la descrizione
-    first_description_box.delete("1.0", tk.END)
-    description_boxes.append(first_description_box)
-
-    # Reset conteggio caselle di testo per la descrizione
-    inner_frame.description_box_count = 1
-
+    description_boxes

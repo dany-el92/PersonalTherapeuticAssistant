@@ -6,10 +6,8 @@ from delete import delete_screen  # Importa la funzione dal file delete.py
 from retrieve import retrieve_screen
 from update import update_screen
 
-
 def show_frame(frame_):
     frame_.tkraise()
-
 
 def center_window(window, width, height):
     screen_width = window.winfo_screenwidth()
@@ -19,10 +17,11 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
     window.resizable(False, False)
 
+#########################################################################
 
 # Crea la finestra principale
 root = tk.Tk()
-root.title("Operazioni CRUD")
+root.title("CRUD Operations")
 center_window(root, 500, 500)
 
 header_font = font.Font(family="Helvetica", size=24, weight="bold")
@@ -38,7 +37,7 @@ for frame in (main_frame, create_frame, delete_frame, retrieve_frame, update_fra
     frame.grid(row=0, column=0, sticky='nsew')
 
 # Configura la schermata principale
-main_label = tk.Label(main_frame, text="Operazioni CRUD", font=header_font, bg="#2C3E50")
+main_label = tk.Label(main_frame, text="CRUD Operations", font=header_font, bg="#2C3E50")
 main_label.pack(padx=20, pady=50, anchor='s')
 
 button_frame = tk.Frame(main_frame, bg="#2C3E50")
