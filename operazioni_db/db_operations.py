@@ -246,8 +246,10 @@ class Database:
         try:
             collection = self.db[collection_name]
             collection.update_one({"tag": tag}, {"$set": new_document})
+            return True
         except Exception as e:
             print(f"Error updating document by tag: {e}")
+            return False
 
     def update_specific_response(self, tag, response, new_response):
         """
