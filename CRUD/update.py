@@ -62,11 +62,9 @@ def update_screen(frame, show_main_frame):
     tag_label = tk.Label(frame, text="Pattern", font=("Helvetica", 14), bg="#2C3E50", fg="white")
     tag_label.pack(pady=5)
 
-    tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black")
+    tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black", insertbackground="black")
     tag_entry.pack(pady=0, ipady=5, padx=1)
-
     tag_entry.focus_set()
-    tag_entry.icursor(0)
 
     def category_changed(*args):
         new_category = category_var.get()
@@ -103,7 +101,8 @@ def update_screen(frame, show_main_frame):
                               command=lambda: retrieve_and_display(tag_entry.get(), category_var.get(), result_text))
     submit_button.pack(pady=5)
 
-    result_text = tk.Text(frame, height=10, width=55, font=("Helvetica", 12), bg="white", fg="black")
+    result_text = tk.Text(frame, height=10, width=55, font=("Helvetica", 12), bg="white", fg="black",
+                          insertbackground="black")
     result_text.pack(pady=5, ipady=5, ipadx=5)
 
     back_button = tk.Button(frame, text="⬅", **back_button_options,
@@ -148,12 +147,10 @@ def update(tag, category, result_text, tag_entry, category_var):
         if not isinstance(to_update_list, list):
             raise ValueError("Data is not a list")
     except json.JSONDecodeError as e:
-        print(e)
-        messagebox.showinfo("Error", f"Invalid data")
+        messagebox.showinfo("Error", f"Invalid JSON data: {e}")
         return
     except ValueError as e:
-        print(e)
-        messagebox.showinfo("Error", f"Invalid data format")
+        messagebox.showinfo("Error", f"Invalid data format: {e}")
         return
 
     db = Database()

@@ -63,8 +63,9 @@ def retrieve_screen(frame, show_main_frame):
     tag_label = tk.Label(frame, text="Pattern", font=("Helvetica", 14), bg="#2C3E50", fg="white")
     tag_label.pack(pady=5)
 
-    tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black")
+    tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black", insertbackground="black")
     tag_entry.pack(pady=0, ipady=5, padx=1)
+    tag_entry.focus_set()
 
     tag_entry.focus_set()
     tag_entry.icursor(0)
@@ -149,3 +150,4 @@ def retrieve_and_display(tag, category, result_text):
     else:
         result_text.delete('1.0', tk.END)
         result_text.insert(tk.END, "No data found for this tag")
+
