@@ -206,33 +206,37 @@ class Database:
         except Exception as e:
             print(f"Error deleting all documents: {e}")
 
-    def delete_specific_response(self, tag, response):
+    def delete_specific_responses(self, tag, responses):
         """
-        Elimina una risposta specifica da un documento con un determinato tag.
+        Elimina delle response specifiche da un documento con un determinato tag.
 
         Args:
             tag (str): Il tag del documento.
-            response (str): La risposta da eliminare.
+            responses (list): Le response da eliminare.
         """
         try:
             collection = self.db['responses']
-            collection.update_one({"tag": tag}, {"$pull": {"responses": response}})
+            collection.delete_many({"tag": tag, "responses": {"$in": responses}})
+            return True
         except Exception as e:
-            print(f"Error deleting specific response: {e}")
+            print(f"Error deleting specific responses: {e}")
+            return False
 
-    def delete_specific_pattern(self, tag, pattern):
+    def delete_specific_patterns(self, tag, patterns):
         """
-        Elimina un pattern specifico da un documento con un determinato tag.
+        Elimina dei pattern specifici da un documento con un determinato tag.
 
         Args:
             tag (str): Il tag del documento.
-            pattern (str): Il pattern da eliminare.
+            patterns (list): I pattern da eliminare.
         """
         try:
             collection = self.db['patterns']
-            collection.update_one({"tag": tag}, {"$pull": {"patterns": pattern}})
+            collection.update_one({"tag": tag}, {"$pull": {"patterns": {"$in": patterns}}})
+            return True
         except Exception as e:
-            print(f"Error deleting specific pattern: {e}")
+            print(f"Error deleting specific patterns: {e}")
+            return False
 
     def update_document_by_tag(self, collection_name, tag, new_document):
         """
@@ -351,8 +355,8 @@ if __name__ == "__main__":
     # db.delete_all_documents('responses')
 
     # Esempio di delete specific
-    # db.delete_specific_response('test_tag2', 'Hi!')
-    # db.delete_specific_pattern('test_tag2', 'Hello')
+    # db.delete_specific_responses('test_tag2', ['Hi'])
+    # db.delete_specific_patterns('test_tag2', ['Hello'])
 
     # Esempio di update
     # db.update_document_by_tag('patterns', 'test_tag2', {'tag': 'test_tag2', 'patterns': ['Hello', 'Hi!']})
