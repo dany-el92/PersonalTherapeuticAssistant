@@ -7,7 +7,7 @@ import platform
 def create_screen(frame, show_main_frame):
     frame.configure(bg="#2C3E50")
 
-    label = tk.Label(frame, text="Create Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="white")
+    label = tk.Label(frame, text="Create Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="#f9c686")
     label.pack(pady=20)
 
     # Crea un canvas all'interno del frame
@@ -38,26 +38,26 @@ def create_screen(frame, show_main_frame):
     # Imposta altezza della scrollbar
     scrollbar.config(command=canvas.yview, orient="vertical")
 
-    # Categoria
-    category_label = tk.Label(inner_content_frame, text="Category", bg="#2C3E50", fg="white")
-    category_label.pack(side='top', pady=(0, 5), padx=(90, 0))
+    # Collezione
+    collection_label = tk.Label(inner_content_frame, text="Collection", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+    collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
-    category_var = tk.StringVar(inner_content_frame)
-    category_var.set("patterns")  # valore predefinito
+    collection_var = tk.StringVar(inner_content_frame)
+    collection_var.set("patterns")  # valore predefinito
 
-    category_options = tk.OptionMenu(inner_content_frame, category_var, "patterns", "responses")
-    category_options.config(width=10)  # Imposta la larghezza del menu a tendina
-    category_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+    collection_options = tk.OptionMenu(inner_content_frame, collection_var, "patterns", "responses")
+    collection_options.config(width=10,  bg="white", fg="black")  # Imposta la larghezza del menu a tendina
+    collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Tag
-    tag_label = tk.Label(inner_content_frame, text="Tag", bg="#2C3E50", fg="white", width=10)
+    tag_label = tk.Label(inner_content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
     tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
     tag_entry = tk.Entry(inner_content_frame, bg="white", fg="black", width=10)
     tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Descrizione
-    description_label = tk.Label(inner_content_frame, text="Description", bg="#2C3E50", fg="white")
+    description_label = tk.Label(inner_content_frame, text="Description", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
     description_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
     description_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
@@ -90,11 +90,11 @@ def create_screen(frame, show_main_frame):
     }
 
     back_button = tk.Button(frame, text="⬅", **back_button_options,
-                            command=lambda: [reset_screen(category_var, tag_entry, description_boxes, inner_frame),
+                            command=lambda: [reset_screen(collection_var, tag_entry, description_boxes),
                             show_main_frame()])
     back_button.place(x=5, y=5)
 
-    submit_button = tk.Button(button_frame, text="Submit", command=lambda: submit_data(category_var, tag_entry, description_boxes, show_main_frame, inner_frame),
+    submit_button = tk.Button(button_frame, text="Submit", command=lambda: submit_data(collection_var, tag_entry, description_boxes, show_main_frame),
                               bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
     submit_button.pack(side='right', padx=10)
 
@@ -112,7 +112,7 @@ def add_description_box(description_frame, description_boxes):
     # Aggiungi la nuova casella di testo alla lista
     description_boxes.append(additional_description_text)
 
-def submit_data(category_var, tag_entry, description_boxes, show_main_frame, inner_frame):
+def submit_data(category_var, tag_entry, description_boxes, show_main_frame):
     db = Database()
 
     category = category_var.get()
@@ -123,24 +123,29 @@ def submit_data(category_var, tag_entry, description_boxes, show_main_frame, inn
         messagebox.showinfo("Error", "All fields must be filled")
         return
 
-    if category == "patterns":
-        db.insert_pattern(tag, descriptions)
-    else:
-        db.insert_response(tag, descriptions)
+    try:
+        if category == "patterns":
+            db.insert_pattern(tag, descriptions)
+        else:
+            db.insert_response(tag, descriptions)
+
+        messagebox.showinfo("Success", "Data inserted successfully")
+
+    except Exception as e:
+        messagebox.showinfo("Error", f"An error occurred: {e}")
 
     # Pulisci lo schermo
-    reset_screen(category_var, tag_entry, description_boxes, inner_frame)
+    reset_screen(category_var, tag_entry, description_boxes)
 
-    # Torna alla schermata principale
-    show_main_frame()
 
-def reset_screen(category_var, tag_entry, description_boxes, inner_frame):
+def reset_screen(category_var, tag_entry, description_boxes):
     # Pulisci e resetta le variabili
     category_var.set("patterns")
     tag_entry.delete(0, tk.END)
 
     # Riferimento alla prima casella di testo per la descrizione
     first_description_box = description_boxes[0]
+    first_description_box.delete("1.0", tk.END)
 
     # Pulisci e rimuovi le caselle di testo per la descrizione
     for box in description_boxes[1:]:
