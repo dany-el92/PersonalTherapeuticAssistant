@@ -3,7 +3,6 @@ from tkinter import scrolledtext
 from PIL import Image, ImageTk
 import datetime
 
-
 class ChatbotApp:
     def __init__(self, root, db):
         self.send_button = None
@@ -27,6 +26,7 @@ class ChatbotApp:
         self.db = db
 
         self.setup_gui()
+        self.center_window(450, 650)
 
     def setup_gui(self):
         self.root.title("Chatbot")
@@ -41,8 +41,8 @@ class ChatbotApp:
 
         self.header_frame = tk.Frame(self.root, bg="#34495E", height=60)
         self.header_frame.pack(fill=tk.X, side=tk.TOP)
-        self.header_label = tk.Label(self.header_frame, text="SupportBot", font=("Helvetica", 18, "bold"), fg="white",
-                                     bg="#34495E")
+        self.header_label = tk.Label(self.header_frame, text="SupportBot", font=("Helvetica", 18, "bold"),
+                                     fg="#f9c686", bg="#34495E")
         self.header_label.pack(padx=10, pady=15)
 
         self.chat_area = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, font=("Helvetica", 14), bg="white",
@@ -61,9 +61,9 @@ class ChatbotApp:
         self.send_image = Image.open("chatbot/icons/send_icon.png")
         self.send_image = self.send_image.resize((30, 30), Image.LANCZOS)
         self.send_icon = ImageTk.PhotoImage(self.send_image)
-        self.send_button = tk.Button(self.input_frame, image=self.send_icon, command=self.send_message, bg="#34495E",
-                                     borderwidth=0)
+        self.send_button = tk.Label(self.input_frame, image=self.send_icon, bg="#34495E")
         self.send_button.pack(side=tk.RIGHT, padx=(5, 10), pady=10)
+        self.send_button.bind("<Button-1>", lambda event: self.send_message())
 
         # Load user and bot avatars
         self.user_avatar_image = Image.open("chatbot/icons/user_icon.png")
@@ -74,7 +74,7 @@ class ChatbotApp:
         self.bot_avatar_image = self.bot_avatar_image.resize((30, 30), Image.LANCZOS)
         self.bot_avatar = ImageTk.PhotoImage(self.bot_avatar_image)
 
-    def send_message(self):
+    def send_message(self, event=None):
         user_message = self.entry_var.get().strip()
         if user_message:
             self.display_message("You", user_message, self.user_color, "right")
@@ -126,3 +126,11 @@ class ChatbotApp:
 
         self.chat_area.config(state=tk.DISABLED)
         self.chat_area.yview(tk.END)
+
+    def center_window(self, width, height):
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+        self.root.resizable(False, False)
