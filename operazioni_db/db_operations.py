@@ -266,7 +266,10 @@ class Database:
         """
         try:
             collection = self.db['responses']
-            collection.update_one({"tag": tag, "responses": response}, {"$set": {"responses.$": new_response}})
+            if response == "to_add":
+                collection.update_one({"tag": tag}, {"$addToSet": {"responses": new_response}})
+            else:
+                collection.update_one({"tag": tag, "responses": response}, {"$set": {"responses.$": new_response}})
         except Exception as e:
             print(f"Error updating specific response: {e}")
 
@@ -281,7 +284,10 @@ class Database:
         """
         try:
             collection = self.db['patterns']
-            collection.update_one({"tag": tag, "patterns": pattern}, {"$set": {"patterns.$": new_pattern}})
+            if pattern == "to_add":
+                collection.update_one({"tag": tag}, {"$addToSet": {"patterns": new_pattern}})
+            else:
+                collection.update_one({"tag": tag, "patterns": pattern}, {"$set": {"patterns.$": new_pattern}})
         except Exception as e:
             print(f"Error updating specific pattern: {e}")
 
@@ -334,7 +340,7 @@ if __name__ == "__main__":
     # Esempio di select
     # print(db.get_all_patterns())
     # print(db.get_all_responses())
-    # print(db.get_patterns_by_tag('about'))
+    # print(db.get_patterns_by_tag('morning'))
     # print(db.get_responses_by_tag('goodbye'))
     #
     # # Esempio di covered query
@@ -363,9 +369,9 @@ if __name__ == "__main__":
     # db.update_document_by_tag('responses', 'test_tag2', {'tag': 'test_tag2', 'responses': ['Hello there!', 'Hi!']})
 
     # Esempio di update specific
-    # db.update_specific_response('test_tag2', 'Hi!', 'Hi :)')
-    # db.update_specific_pattern('test_tag2', 'Hello', 'Hello there')
+    # db.update_specific_response('morning', 'to_add', 'Buongiorno')
+    # db.update_specific_pattern('morning', 'to_add', 'Buongiorno')
 
     # Esempio di text search
-    print(db.text_search('not ok', 'patterns'))
-    print(db.text_search('not ok', 'responses'))
+    # print(db.text_search('not ok', 'patterns'))
+    # print(db.text_search('not ok', 'responses'))

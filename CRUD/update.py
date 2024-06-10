@@ -1,172 +1,248 @@
 import tkinter as tk
 from tkinter import messagebox
 from operazioni_db.db_operations import Database
-import json
-from bson import ObjectId
+import platform
 
-
-def json_converter(obj):
-    if isinstance(obj, ObjectId):
-        return str(obj)
-    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
-
-
-def retrieve_data(tag, category):
-    db = Database()
-
-    if category == "patterns":
-        patterns = db.get_patterns_by_tag(tag)
-        print(patterns)
-        print("\n")
-        print((len(patterns)))
-        print("\n")
-        return patterns
-    else:
-        responses = db.get_responses_by_tag(tag)
-        print(responses)
-        print("\n")
-        print((len(responses)))
-        print("\n")
-        return responses
-
-
-def update_ui(category, tag_label):
-    if category == "patterns":
-        tag_label.config(text="Pattern")
-    elif category == "responses":
-        tag_label.config(text="Response")
-
-
-def reset_update_screen(tag_entry, result_text, category_var):
-    tag_entry.delete(0, tk.END)
-    category_var.set("patterns")
-    result_text.delete('1.0', tk.END)
+global old_values
+old_values = []
+global tag_entry
+tag_entry = None
 
 
 def update_screen(frame, show_main_frame):
+    if show_main_frame is None or not callable(show_main_frame):
+        raise ValueError("show_main_frame must be a valid function")
+
     frame.configure(bg="#2C3E50")
 
-    label = tk.Label(frame, text="Update Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="white")
+    label = tk.Label(frame, text="Update Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="#fda836")
     label.pack(pady=20)
 
-    category_label = tk.Label(frame, text="Category", font=("Helvetica", 14), bg="#2C3E50", fg="white")
-    category_label.pack(pady=5)
+    # Crea un canvas all'interno del frame
+    canvas = tk.Canvas(frame, bg="#2C3E50", bd=0, highlightthickness=0)
+    canvas.pack(side='left', fill='both', expand=True, padx=20, pady=10)
 
-    category_var = tk.StringVar(frame)
-    category_var.set("patterns")
+    # Aggiungi una scrollbar al frame
+    scrollbar = tk.Scrollbar(frame, command=canvas.yview)
+    scrollbar.pack(side='right', fill='y')
 
-    category_options = tk.OptionMenu(frame, category_var, "patterns", "responses")
-    category_options.config(font=("Helvetica", 14), bg="white", fg="black")
-    category_options.pack(pady=5)
+    canvas['yscrollcommand'] = scrollbar.set
 
-    tag_label = tk.Label(frame, text="Pattern", font=("Helvetica", 14), bg="#2C3E50", fg="white")
-    tag_label.pack(pady=5)
+    # Crea un frame interno al canvas per contenere i widget
+    inner_frame = tk.Frame(canvas, bg="#2C3E50")
+    canvas.create_window((0, 0), window=inner_frame, anchor='nw')
 
-    tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black", insertbackground="black")
-    tag_entry.pack(pady=0, ipady=5, padx=1)
-    tag_entry.focus_set()
+    # Aggiorna la dimensione del canvas quando il frame interno cambia
+    inner_frame.bind('<Configure>', lambda event: canvas.configure(scrollregion=canvas.bbox('all')))
 
-    def category_changed(*args):
-        new_category = category_var.get()
-        update_ui(new_category, tag_label)
+    # Centra gli elementi all'interno del frame
+    inner_content_frame = tk.Frame(inner_frame, bg="#2C3E50")
+    inner_content_frame.pack(expand=True, pady=10)
 
-    category_var.trace("w", category_changed)
-    update_ui(category_var.get(), tag_label)
+    # Imposta altezza del canvas in base al contenuto
+    canvas_height = inner_content_frame.winfo_reqheight()
+    canvas.config(height=canvas_height)
 
-    button_options = {
-        "font": ("Helvetica", 14),
-        "bd": 0,
-        "bg": "white",
-        "padx": 10,
-        "pady": 10,
-    }
+    # Imposta altezza della scrollbar
+    scrollbar.config(command=canvas.yview, orient="vertical")
 
-    button_options_retrieve = {
-        "font": ("Helvetica", 14),
-        "bd": 0,
-        "bg": "white",
-        "padx": 0,
-        "pady": 0,
-    }
+    values = {"Update a single element from a document": "3"}
 
+    v_radio = tk.StringVar(inner_content_frame)  # Variabile per memorizzare il valore selezionato
+    v_checkbox = []  # Variabile per memorizzare il valore selezionato
+
+    collection_var = tk.StringVar(inner_content_frame)
+    collection_var.set("patterns")  # valore predefinito
+
+    # Funzione di callback per aggiornare il contenuto in base alla selezione
+    def update_content(*args):
+        for widget in content_frame.winfo_children():
+            widget.destroy()
+
+        for widget in result_frame.winfo_children():
+            widget.destroy()
+
+        selection = v_radio.get()
+
+        if selection == "3":
+            # Collezione
+            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686",
+                                        font=("Helvetica", 16))
+            collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
+
+            collection_var.set("patterns")  # valore predefinito
+
+            collection_options = tk.OptionMenu(content_frame, collection_var, "patterns", "responses")
+            collection_options.config(width=10, bg="white", fg="black")  # Imposta la larghezza del menu a tendina
+            collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+
+            # Tag
+            tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+                                 width=10)
+            tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
+
+            global tag_entry
+            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+            tag_entry.focus_set()
+            tag_entry.icursor(0)
+
+            search_button = tk.Button(content_frame, text="Search",
+                                      command=lambda: search_elements(tag_entry.get(), collection_var.get()),
+                                      bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+            search_button.pack(side='top', pady=(10, 5))
+
+    v_radio.trace("w", update_content)  # Associa la funzione di callback alla variabile v_radio
+
+    # Funzione di callback per cercare gli elementi da eliminare
+    def search_elements(tag, collection_var):
+        v_checkbox.clear()
+        db = Database()
+        global old_values
+        old_values = []
+
+        for widget in result_frame.winfo_children():
+            widget.destroy()
+
+        elements = []
+        try:
+            if collection_var == "patterns":
+                results = db.get_patterns_by_tag(tag)
+                elements = results[0]['patterns']
+            else:
+                results = db.get_responses_by_tag(tag)
+                elements = results[0]['responses']
+            success = True
+        except Exception as e:
+            messagebox.showinfo("Error", f"Tag not inserted!")
+            success = False
+
+        if success:
+            cb_label = tk.Label(result_frame, text="Modify elements", bg="#2C3E50", fg="#f9c686",
+                                font=("Helvetica", 16))
+            cb_label.pack(side='top', pady=(0, 5), padx=(90, 0))
+
+            for element in elements:
+                old_values.append(element)
+                entry_var = tk.StringVar(value=element)
+                v_checkbox.append(entry_var)
+
+                entry_frame = tk.Frame(result_frame, bg="#2C3E50")
+                entry_frame.pack(side='top', padx=(90, 0), anchor='w')
+
+                entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black")
+                entry.pack(side='left',pady=0, ipady=5, padx=1)
+
+            add_button = tk.Button(result_frame, text="+", command=lambda: add_new_entry(result_frame, v_checkbox),
+                                   bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+            add_button.pack(side='top', padx=(90, 0), anchor='w')
+
+    def add_new_entry(frame, checkbox_list):
+        entry_var = tk.StringVar()
+        checkbox_list.append(entry_var)
+
+        entry_frame = tk.Frame(frame, bg="#2C3E50")
+        entry_frame.pack(side='top', padx=(90, 0), anchor='w')
+
+        entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black")
+        entry.pack(side='left', fill='x', expand=True)
+
+    for (text, value) in values.items():
+        rb = tk.Radiobutton(inner_content_frame, text=text, variable=v_radio, value=value)
+        rb.config(bg="#2C3E50", fg="white")
+        rb.pack(side='top', ipady=5, padx=(90, 0))
+
+    # Frame per contenere i widget dinamici
+    content_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
+    content_frame.pack(expand=True, pady=10)
+
+    result_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
+    result_frame.pack(expand=True, pady=10)
+
+    # Pulsanti
     back_button_options = {
         "font": ("Helvetica", 10),
         "bd": 0,
         "bg": "white",
+        "fg": "black",
         "padx": 0,
         "pady": 0,
+        "highlightthickness": 0,
+        "activebackground": "white"
     }
 
-    submit_button = tk.Button(frame, text="Retrieve", **button_options_retrieve,
-                              command=lambda: retrieve_and_display(tag_entry.get(), category_var.get(), result_text))
-    submit_button.pack(pady=5)
-
-    result_text = tk.Text(frame, height=10, width=55, font=("Helvetica", 12), bg="white", fg="black",
-                          insertbackground="black")
-    result_text.pack(pady=5, ipady=5, ipadx=5)
-
     back_button = tk.Button(frame, text="⬅", **back_button_options,
-                            command=lambda: [reset_update_screen(tag_entry, result_text, category_var),
+                            command=lambda: [reset_screen(collection_var, tag_entry, result_frame, v_checkbox),
                                              show_main_frame()])
     back_button.place(x=5, y=5)
 
-    update_button = tk.Button(frame, text="Update", **button_options,
-                              command=lambda: update(tag_entry.get(), category_var.get(), result_text, tag_entry,
-                                                     category_var))
-    update_button.pack(pady=10)
+    # Abilita lo scorrimento del canvas con il touchpad
+    if platform.system() == 'Windows':
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int((event.delta / 120) * 2), "units"))
+    elif platform.system() == 'Darwin':
+        canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int(event.delta), "units"))
+
+    update_button = tk.Button(frame, text="Update",
+                              command=lambda: update_data(collection_var, v_checkbox, result_frame),
+                              bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+    update_button.pack(pady=10, side='bottom')
+    update_button.place (y=470)
 
 
-def retrieve_and_display(tag, category, result_text):
-    if not tag:
-        messagebox.showinfo("Error", "Tag field must be filled")
-        return
+def reset_screen(collection_var, tag_entry, result_frame, v_checkbox):
+    # Resetta la selezione della categoria
+    collection_var.set("patterns")
 
-    data = retrieve_data(tag, category)
+    # Cancella il contenuto di tag_entry
+    if tag_entry is not None:
+        tag_entry.delete(0, tk.END)
 
-    if data:
-        if isinstance(data, list) and len(data) > 0:
-            result_text.delete('1.0', tk.END)
-            result_text.insert(tk.END, json.dumps(data, indent=4, default=json_converter))
-        else:
-            result_text.delete('1.0', tk.END)
-            result_text.insert(tk.END, "No data found for this tag")
-    else:
-        result_text.delete('1.0', tk.END)
-        result_text.insert(tk.END, "No data found for this tag")
+    # Cancella tutti i figli di result_frame
+    for widget in result_frame.winfo_children():
+        widget.destroy()
+
+    # Imposta tutte le checkbox come unchecked
+    for checkbox in v_checkbox:
+        checkbox.set("")
 
 
-def update(tag, category, result_text, tag_entry, category_var):
-    if not tag:
-        messagebox.showinfo("Error", "Tag field must be filled")
-        return
-    to_update = result_text.get("1.0", "end-1c")
-    print(to_update)
-
-    try:
-        to_update_list = json.loads(to_update)
-        if not isinstance(to_update_list, list):
-            raise ValueError("Data is not a list")
-    except json.JSONDecodeError as e:
-        messagebox.showinfo("Error", f"Invalid JSON data: {e}")
-        return
-    except ValueError as e:
-        messagebox.showinfo("Error", f"Invalid data format: {e}")
-        return
-
+def update_data(collection_var, v_checkbox, result_frame):
     db = Database()
-    success = True
-    for document in to_update_list:
-        if '_id' not in document:
-            messagebox.showinfo("Error", "Document ID is missing")
-            success = False
-            break
-        update_data = {category: document[category]}
-        if not db.update_document_by_tag(category, tag, update_data):
-            success = False
+    global old_values
 
-    if success:
-        messagebox.showinfo("Success", "Documents updated successfully!")
-        reset_update_screen(tag_entry, result_text, category_var)
+    if collection_var.get() is None or collection_var.get() == "":
+        messagebox.showerror("Error", f"Tag not inserted!")
     else:
-        messagebox.showinfo("Error", "Some documents were not updated")
-        reset_update_screen(tag_entry, result_text, category_var)
+        try:
+            selected_elements = [var.get() for var in v_checkbox if var.get()]
+
+            # Verifica se ci sono elementi aggiunti rispetto ai vecchi valori
+            if len(selected_elements) > len(old_values):
+                print("elementi aggiunti")
+
+            # Aggiorna i pattern o le risposte specifici
+            if collection_var.get() == "patterns":
+                for old_value, new_value in zip(old_values, selected_elements):
+                    print(f"old value: {old_value}, new value: {new_value}")
+                    db.update_specific_pattern(tag_entry.get(), old_value, new_value)
+                # Aggiungi nuovi pattern se ce ne sono
+                for new_element in selected_elements[len(old_values):]:
+                    if new_element is not None and new_element != "":
+                        print(new_element)
+                        db.update_specific_pattern(tag_entry.get(), "to_add", new_element)
+            else:
+                for old_value, new_value in zip(old_values, selected_elements):
+                    print(f"old value: {old_value}, new value: {new_value}")
+                    db.update_specific_response(tag_entry.get(), old_value, new_value)
+                # Aggiungi nuove risposte se ce ne sono
+                for new_element in selected_elements[len(old_values):]:
+                    if new_element is not None and new_element != "":
+                        print(new_element)
+                        db.update_specific_response(tag_entry.get(), "to_add", new_element)
+
+            # Operazione completata con successo
+            messagebox.showinfo("Success", "Data updated successfully")
+            reset_screen(collection_var, tag_entry, result_frame, v_checkbox)
+        except Exception as e:
+            # Errore durante l'aggiornamento dei dati
+            messagebox.showerror("Error", f"An error occurred: {e}")

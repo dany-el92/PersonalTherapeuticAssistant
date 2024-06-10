@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import font
 from create import create_screen  # Importa la funzione dal file create.py
@@ -6,8 +5,10 @@ from delete import delete_screen  # Importa la funzione dal file delete.py
 from retrieve import retrieve_screen
 from update import update_screen
 
+
 def show_frame(frame_):
     frame_.tkraise()
+
 
 def center_window(window, width, height):
     screen_width = window.winfo_screenwidth()
@@ -16,6 +17,7 @@ def center_window(window, width, height):
     y = (screen_height - height) // 2
     window.geometry(f"{width}x{height}+{x}+{y}")
     window.resizable(False, False)
+
 
 #########################################################################
 
