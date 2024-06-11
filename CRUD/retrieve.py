@@ -45,11 +45,11 @@ def reset_retrieve_screen(tag_entry, result_text, category_var):
 def retrieve_screen(frame, show_main_frame):
     frame.configure(bg="#2C3E50")
 
-    label = tk.Label(frame, text="Retrieve Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="white")
+    label = tk.Label(frame, text="Retrieve Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="#fda836")
     label.pack(pady=20)
 
     # Category
-    category_label = tk.Label(frame, text="Category", font=("Helvetica", 14), bg="#2C3E50", fg="white")
+    category_label = tk.Label(frame, text="Category", font=("Helvetica", 14), bg="#2C3E50", fg="#f9c686")
     category_label.pack(pady=5)
 
     category_var = tk.StringVar(frame)
@@ -60,7 +60,7 @@ def retrieve_screen(frame, show_main_frame):
     category_options.pack(pady=5)
 
     # Tag
-    tag_label = tk.Label(frame, text="Pattern", font=("Helvetica", 14), bg="#2C3E50", fg="white")
+    tag_label = tk.Label(frame, text="Pattern", font=("Helvetica", 14), bg="#2C3E50", fg="#f9c686")
     tag_label.pack(pady=5)
 
     tag_entry = tk.Entry(frame, font=("Helvetica", 14), bg="white", fg="black", insertbackground="black")
@@ -71,7 +71,7 @@ def retrieve_screen(frame, show_main_frame):
     tag_entry.icursor(0)
 
     tag_label_star = tk.Label(frame, text="inserisci * per selezionare tutti i tag", font=("Helvetica", 10),
-                              bg="#2C3E50", fg="white")
+                              bg="#2C3E50", fg="#f9c686")
     tag_label_star.pack(pady=15)
 
     # Result
