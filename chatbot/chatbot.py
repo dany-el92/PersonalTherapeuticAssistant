@@ -98,31 +98,11 @@ class ChatbotApp:
         timestamp = datetime.datetime.now().strftime("%H:%M")
 
         if align == "right":
-            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
-            message_frame = tk.Frame(self.chat_area, bg="white")
-            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
-                                     wraplength=250, justify='left', anchor='e')
-            avatar_label = tk.Label(message_frame, image=self.user_avatar, bg="white")
-
-            message_frame.pack(side=tk.RIGHT, anchor='e')
-            message_label.pack(side=tk.RIGHT, padx=5, pady=5)
-            avatar_label.pack(side=tk.RIGHT, padx=5, pady=5)
-            self.chat_area.window_create(tk.END, window=message_frame)
-            self.chat_area.insert(tk.END, f"\n{timestamp:>60}\n", f"{sender}_timestamp")
-            self.chat_area.tag_config(f"{sender}_timestamp", justify='right', font=("Helvetica", 10))
-
+            self.chat_area.insert(tk.END, f"\n{timestamp} {sender}: {message}\n", 'right')
+            self.chat_area.tag_configure('right', justify='right')
         else:
-            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
-            message_frame = tk.Frame(self.chat_area, bg="white")
-            avatar_label = tk.Label(message_frame, image=self.bot_avatar, bg="white")
-            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
-                                     wraplength=250, justify='left')
-
-            avatar_label.pack(side=tk.LEFT, padx=5, pady=5)
-            message_label.pack(side=tk.LEFT, padx=5, pady=5)
-            self.chat_area.window_create(tk.END, window=message_frame)
-            self.chat_area.insert(tk.END, f"\n{timestamp}\n", f"{sender}_timestamp")
-            self.chat_area.tag_config(f"{sender}_timestamp", font=("Helvetica", 10))
+            self.chat_area.insert(tk.END, f"\n{timestamp} {sender}: {message}\n", 'left')
+            self.chat_area.tag_configure('left', justify='left')
 
         self.chat_area.config(state=tk.DISABLED)
         self.chat_area.yview(tk.END)
