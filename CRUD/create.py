@@ -7,7 +7,7 @@ import platform
 def create_screen(frame, show_main_frame):
     frame.configure(bg="#2C3E50")
 
-    label = tk.Label(frame, text="Create Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="#f9c686")
+    label = tk.Label(frame, text="Create Data", font=("Helvetica", 20, "bold"), bg="#2C3E50", fg="#fda836")
     label.pack(pady=20)
 
     # Crea un canvas all'interno del frame

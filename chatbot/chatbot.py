@@ -42,7 +42,7 @@ class ChatbotApp:
         self.header_frame = tk.Frame(self.root, bg="#34495E", height=60)
         self.header_frame.pack(fill=tk.X, side=tk.TOP)
         self.header_label = tk.Label(self.header_frame, text="SupportBot", font=("Helvetica", 18, "bold"),
-                                     fg="#f9c686", bg="#34495E")
+                                     fg="#fda836", bg="#34495E")
         self.header_label.pack(padx=10, pady=15)
 
         self.chat_area = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, font=("Helvetica", 14), bg="white",
@@ -98,11 +98,31 @@ class ChatbotApp:
         timestamp = datetime.datetime.now().strftime("%H:%M")
 
         if align == "right":
-            self.chat_area.insert(tk.END, f"\n{timestamp} {sender}: {message}\n", 'right')
-            self.chat_area.tag_configure('right', justify='right')
+            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
+            message_frame = tk.Frame(self.chat_area, bg="white")
+            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
+                                     wraplength=250, justify='left', anchor='e')
+            avatar_label = tk.Label(message_frame, image=self.user_avatar, bg="white")
+
+            message_frame.pack(side=tk.RIGHT, anchor='e')
+            message_label.pack(side=tk.RIGHT, padx=5, pady=5)
+            avatar_label.pack(side=tk.RIGHT, padx=5, pady=5)
+            self.chat_area.window_create(tk.END, window=message_frame)
+            self.chat_area.insert(tk.END, f"\n{timestamp:>60}\n", f"{sender}_timestamp")
+            self.chat_area.tag_config(f"{sender}_timestamp", justify='right', font=("Helvetica", 10))
+
         else:
-            self.chat_area.insert(tk.END, f"\n{timestamp} {sender}: {message}\n", 'left')
-            self.chat_area.tag_configure('left', justify='left')
+            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
+            message_frame = tk.Frame(self.chat_area, bg="white")
+            avatar_label = tk.Label(message_frame, image=self.bot_avatar, bg="white")
+            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
+                                     wraplength=250, justify='left')
+
+            avatar_label.pack(side=tk.LEFT, padx=5, pady=5)
+            message_label.pack(side=tk.LEFT, padx=5, pady=5)
+            self.chat_area.window_create(tk.END, window=message_frame)
+            self.chat_area.insert(tk.END, f"\n{timestamp}\n", f"{sender}_timestamp")
+            self.chat_area.tag_config(f"{sender}_timestamp", font=("Helvetica", 10))
 
         self.chat_area.config(state=tk.DISABLED)
         self.chat_area.yview(tk.END)

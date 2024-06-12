@@ -39,7 +39,7 @@ for frame in (main_frame, create_frame, delete_frame, retrieve_frame, update_fra
     frame.grid(row=0, column=0, sticky='nsew')
 
 # Configura la schermata principale
-main_label = tk.Label(main_frame, text="CRUD Operations", font=header_font, bg="#2C3E50")
+main_label = tk.Label(main_frame, text="CRUD Operations", font=header_font, bg="#2C3E50", fg ="#fda836")
 main_label.pack(padx=20, pady=50, anchor='s')
 
 button_frame = tk.Frame(main_frame, bg="#2C3E50")
