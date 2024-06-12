@@ -7,7 +7,10 @@ global old_values
 old_values = []
 global tag_entry
 tag_entry = None
-
+global old_tag_entry
+old_tag_entry = None
+global new_tag_entry
+new_tag_entry = None
 
 def update_screen(frame, show_main_frame):
     if show_main_frame is None or not callable(show_main_frame):
@@ -46,7 +49,10 @@ def update_screen(frame, show_main_frame):
     # Imposta altezza della scrollbar
     scrollbar.config(command=canvas.yview, orient="vertical")
 
-    values = {"Update a single element from a document": "3"}
+    values = {
+        "Update a single element from a document": "3",
+        "Update a single tag from a document": "2"
+    }
 
     v_radio = tk.StringVar(inner_content_frame)  # Variabile per memorizzare il valore selezionato
     v_checkbox = []  # Variabile per memorizzare il valore selezionato
@@ -92,6 +98,58 @@ def update_screen(frame, show_main_frame):
                                       bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
             search_button.pack(side='top', pady=(10, 5))
 
+            button_frame = tk.Frame(content_frame, bg="#2C3E50")
+            button_frame.pack(side='top', fill='x', padx=(90, 0))
+
+            update_button = tk.Button(button_frame, text="Update",
+                                      command=lambda: update_data(collection_var, v_checkbox, result_frame),
+                                      bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+            update_button.pack(side='right')
+            '''update_button = tk.Button(frame, text="Update",
+                                      command=lambda: update_data(collection_var, v_checkbox, result_frame),
+                                      bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+            update_button.pack(pady=10, side='bottom')
+            update_button.place(y=470)'''
+
+        elif selection == "2":
+            # Collezione
+            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686",
+                                        font=("Helvetica", 16))
+            collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
+
+            collection_var.set("patterns")  # valore predefinito
+
+            collection_options = tk.OptionMenu(content_frame, collection_var, "patterns", "responses")
+            collection_options.config(width=10, bg="white", fg="black")  # Imposta la larghezza del menu a tendina
+            collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+
+            # Tag attuale
+            old_tag_label = tk.Label(content_frame, text="Current Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+                                     width=10)
+            old_tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
+
+            global old_tag_entry
+            old_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            old_tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+            old_tag_entry.focus_set()
+            old_tag_entry.icursor(0)
+
+            # Nuovo tag
+            new_tag_label = tk.Label(content_frame, text="New Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+                                     width=10)
+            new_tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
+
+            global new_tag_entry
+            new_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            new_tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
+            new_tag_entry.focus_set()
+            new_tag_entry.icursor(0)
+
+            update_tag_button = tk.Button(content_frame, text="Update Tag",
+                                          command=lambda: update_tag(old_tag_entry.get(), new_tag_entry.get(), collection_var.get()),
+                                          bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+            update_tag_button.pack(side='top', pady=(10, 5))
+
     v_radio.trace("w", update_content)  # Associa la funzione di callback alla variabile v_radio
 
     # Funzione di callback per cercare gli elementi da eliminare
@@ -114,7 +172,7 @@ def update_screen(frame, show_main_frame):
                 elements = results[0]['responses']
             success = True
         except Exception as e:
-            messagebox.showinfo("Error", f"Tag not inserted!")
+            messagebox.showinfo("Error", f"Tag not inserted or tag not present in the collection selected!")
             success = False
 
         if success:
@@ -135,17 +193,25 @@ def update_screen(frame, show_main_frame):
 
             add_button = tk.Button(result_frame, text="+", command=lambda: add_new_entry(result_frame, v_checkbox),
                                    bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
-            add_button.pack(side='top', padx=(90, 0), anchor='w')
+            add_button.pack(side='top', padx=(90, 0), pady=10)
 
-    def add_new_entry(frame, checkbox_list):
+    def add_new_entry(result_frame, v_checkbox):
         entry_var = tk.StringVar()
-        checkbox_list.append(entry_var)
+        v_checkbox.append(entry_var)
 
-        entry_frame = tk.Frame(frame, bg="#2C3E50")
+        entry_frame = tk.Frame(result_frame, bg="#2C3E50")
         entry_frame.pack(side='top', padx=(90, 0), anchor='w')
 
         entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black")
         entry.pack(side='left', fill='x', expand=True)
+
+    def update_tag(old_tag, new_tag, collection_var):
+        db = Database()
+        try:
+            db.update_tag(collection_var, old_tag, new_tag)
+            messagebox.showinfo("Success", "Tag updated successfully")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
 
     for (text, value) in values.items():
         rb = tk.Radiobutton(inner_content_frame, text=text, variable=v_radio, value=value)
@@ -182,20 +248,31 @@ def update_screen(frame, show_main_frame):
     elif platform.system() == 'Darwin':
         canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int(event.delta), "units"))
 
-    update_button = tk.Button(frame, text="Update",
-                              command=lambda: update_data(collection_var, v_checkbox, result_frame),
-                              bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
-    update_button.pack(pady=10, side='bottom')
-    update_button.place (y=470)
-
 
 def reset_screen(collection_var, tag_entry, result_frame, v_checkbox):
     # Resetta la selezione della categoria
     collection_var.set("patterns")
 
-    # Cancella il contenuto di tag_entry
+    # Cancella il contenuto di tag_entry se esiste
     if tag_entry is not None:
-        tag_entry.delete(0, tk.END)
+        try:
+            tag_entry.delete(0, tk.END)
+        except tk.TclError:
+            pass
+
+    # Cancella il contenuto di old_tag_entry se esiste
+    if old_tag_entry is not None:
+        try:
+            old_tag_entry.delete(0, tk.END)
+        except tk.TclError:
+            pass
+
+    # Cancella il contenuto di new_tag_entry se esiste
+    if new_tag_entry is not None:
+        try:
+            new_tag_entry.delete(0, tk.END)
+        except tk.TclError:
+            pass
 
     # Cancella tutti i figli di result_frame
     for widget in result_frame.winfo_children():
@@ -205,13 +282,12 @@ def reset_screen(collection_var, tag_entry, result_frame, v_checkbox):
     for checkbox in v_checkbox:
         checkbox.set("")
 
-
 def update_data(collection_var, v_checkbox, result_frame):
     db = Database()
     global old_values
 
     if collection_var.get() is None or collection_var.get() == "":
-        messagebox.showerror("Error", f"Tag not inserted!")
+        messagebox.showerror("Error", f"Tag not inserted or tag not present in the collection selected!")
     else:
         try:
             selected_elements = [var.get() for var in v_checkbox if var.get()]
