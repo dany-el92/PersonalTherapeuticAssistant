@@ -291,6 +291,23 @@ class Database:
         except Exception as e:
             print(f"Error updating specific pattern: {e}")
 
+    def update_tag(self, collection_name, old_tag, new_tag):
+        """
+        Aggiorna il tag di un documento in una collezione specificata.
+
+        Args:
+            collection_name (str): Il nome della collezione in cui aggiornare il tag.
+            old_tag (str): Il vecchio tag del documento da aggiornare.
+            new_tag (str): Il nuovo tag da assegnare al documento.
+        """
+        try:
+            collection = self.db[collection_name]
+            collection.update_many({"tag": old_tag}, {"$set": {"tag": new_tag}})
+            return True
+        except Exception as e:
+            print(f"Error updating tag from '{old_tag}' to '{new_tag}' in collection '{collection_name}': {e}")
+            return False
+
     def text_search(self, text, collection_name):
         """
         Trova il tag associato a un testo specifico cercandolo nei patterns o nelle responses del dataset.
@@ -340,7 +357,7 @@ if __name__ == "__main__":
     # Esempio di select
     # print(db.get_all_patterns())
     # print(db.get_all_responses())
-    # print(db.get_patterns_by_tag('morning'))
+    # print(db.get_patterns_by_tag('test-2'))
     # print(db.get_responses_by_tag('goodbye'))
     #
     # # Esempio di covered query
@@ -371,6 +388,10 @@ if __name__ == "__main__":
     # Esempio di update specific
     # db.update_specific_response('morning', 'to_add', 'Buongiorno')
     # db.update_specific_pattern('morning', 'to_add', 'Buongiorno')
+
+    # Esempio di update tag
+    # db.update_tag("patterns", "test-2", "test-tag"):
+
 
     # Esempio di text search
     # print(db.text_search('not ok', 'patterns'))
