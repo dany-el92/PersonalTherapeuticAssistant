@@ -1,5 +1,8 @@
 <div align="center">
-# SupportBot
+
+# SupportBot :speech_balloon: 
+
+ [Amendola Daniela](https://github.com/), [Costante Luigina](https://github.com/Luigina2001)
 </div>
 
 # Table of Contents
@@ -16,13 +19,11 @@
 
 # Introduzione
 
-Questo progetto mira a creare un chatbot che interroga un database NoSQL. Il chatbot utilizza un dataset per fornire risposte agli utenti, integrando operazioni CRUD (Create, Read, Update, Delete) sul database. L'obiettivo è sviluppare un sistema efficiente per gestire e rispondere a domande basate sui dati memorizzati.
-
-Il sistema include componenti per la gestione del database, l'interfaccia per l'esecuzione delle operazioni CRUD, l'analisi del dataset e l'interfaccia utente del chatbot.
+Questo progetto ha l'obiettivo di sviluppare un chatbot destinato a fornire supporto alle persone affette da ansia e depressione tramite conversazioni di assistenza per la salute mentale. A differenza dei classici chatbot basati su modelli di apprendimento, esso funziona tramite regole predefinite. Il suo funzionamento è stato implementato interamente attraverso interrogazioni a un database NoSQL contenente conversazioni.
 
 # Dataset
 
-Il dataset utilizzato include vari file JSON contenenti pattern e risposte. Questi file sono essenziali per il funzionamento del chatbot.
+Il dataset utilizzato include tre file JSON contenenti pattern e risposte, essenziali per il funzionamento del chatbot:
 
 - `tag_responses.json`: contiene le risposte del chatbot.
 - `tag_patterns.json`: contiene i pattern delle domande.
@@ -41,17 +42,25 @@ Se Python non è installato, fai riferimento alla guida ufficiale [Python Guide]
 ## Clonazione del repository
 
 Per clonare questo repository, scarica ed estrai i file del progetto `.zip` usando il pulsante `<Code>` in alto a destra o esegui il seguente comando nel tuo terminale:
-```shell git clone <URL>```
+```shell 
+git clone <URL>
+```
 
 
 # Installazione dei Requirements
 Installa i requisiti del progetto utilizzando il seguente comando nel tuo terminale:
-```shell pip install -r requirements.txt```
+```shell
+pip install -r requirements.txt
+```
 
 # Utilizzo
-## Chatbot
+<b>Chatbot</b>
 Per avviare il chatbot, eseguire:
-```shell python chatbot/main.py```
-## Operazioni CRUD
+```shell 
+python chatbot/main.py
+```
+<b>Operazioni CRUD</b>
 Le operazioni CRUD possono essere eseguite utilizzando il seguente comando nel tuo terminale:
-```shell python CRUD/home.py```
+```shell 
+python CRUD/home.py
+```
