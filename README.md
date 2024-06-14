@@ -2,7 +2,7 @@
 
 # SupportBot :speech_balloon: 
 
- [Amendola Daniela](https://github.com/), [Costante Luigina](https://github.com/Luigina2001)
+ [Amendola Daniela](https://github.com/dany-el9), [Costante Luigina](https://github.com/Luigina2001)
 </div>
 
 # Table of Contents
