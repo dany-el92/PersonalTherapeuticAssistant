@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import scrolledtext
 from PIL import Image, ImageTk
 import datetime
+
 
 class ChatbotApp:
     def __init__(self, root, db):
@@ -11,7 +11,10 @@ class ChatbotApp:
         self.entry_box = None
         self.entry_var = None
         self.input_frame = None
-        self.chat_area = None
+        self.chat_area_frame = None
+        self.canvas = None
+        self.scrollbar = None
+        self.scrollable_frame = None
         self.header_label = None
         self.header_frame = None
         self.text_color = None
@@ -26,7 +29,7 @@ class ChatbotApp:
         self.db = db
 
         self.setup_gui()
-        self.center_window(450, 650)
+        self.center_window(350, 550)
 
     def setup_gui(self):
         self.root.title("Chatbot")
@@ -45,20 +48,36 @@ class ChatbotApp:
                                      fg="#fda836", bg="#34495E")
         self.header_label.pack(padx=10, pady=15)
 
-        self.chat_area = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, font=("Helvetica", 14), bg="white",
-                                                   fg=self.text_color, state=tk.DISABLED)
-        self.chat_area.pack(padx=15, pady=(15, 0), fill=tk.BOTH, expand=True)
+        self.chat_area_frame = tk.Frame(self.root, bg="white")
+        self.chat_area_frame.pack(padx=15, pady=(15, 0), ipadx=5, ipady=5, fill=tk.BOTH, expand=True)
+
+        self.canvas = tk.Canvas(self.chat_area_frame, bg="white", highlightthickness=0)
+        self.scrollbar = tk.Scrollbar(self.chat_area_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = tk.Frame(self.canvas, bg="white")
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
 
         self.input_frame = tk.Frame(self.root, bg="#34495E", height=50)
         self.input_frame.pack(fill=tk.X, side=tk.BOTTOM)
 
         self.entry_var = tk.StringVar()
         self.entry_box = tk.Entry(self.input_frame, textvariable=self.entry_var, font=("Helvetica", 14), bg="white",
-                                  fg="black", relief="flat")
+                                  fg="black", relief="flat", insertbackground="black")
         self.entry_box.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(10, 5), pady=10)
         self.entry_box.bind("<Return>", self.send_message)
 
-        self.send_image = Image.open("chatbot/icons/send_icon.png")
+        self.send_image = Image.open("icons/send_icon.png")
         self.send_image = self.send_image.resize((30, 30), Image.LANCZOS)
         self.send_icon = ImageTk.PhotoImage(self.send_image)
         self.send_button = tk.Label(self.input_frame, image=self.send_icon, bg="#34495E")
@@ -66,18 +85,18 @@ class ChatbotApp:
         self.send_button.bind("<Button-1>", lambda event: self.send_message())
 
         # Load user and bot avatars
-        self.user_avatar_image = Image.open("chatbot/icons/user_icon.png")
+        self.user_avatar_image = Image.open("icons/user_icon.png")
         self.user_avatar_image = self.user_avatar_image.resize((30, 30), Image.LANCZOS)
         self.user_avatar = ImageTk.PhotoImage(self.user_avatar_image)
 
-        self.bot_avatar_image = Image.open("chatbot/icons/bot_icon.png")
+        self.bot_avatar_image = Image.open("icons/bot_icon.png")
         self.bot_avatar_image = self.bot_avatar_image.resize((30, 30), Image.LANCZOS)
         self.bot_avatar = ImageTk.PhotoImage(self.bot_avatar_image)
 
     def send_message(self, event=None):
         user_message = self.entry_var.get().strip()
         if user_message:
-            self.display_message("You", user_message, self.user_color, "right")
+            self.display_message("You", user_message, self.user_color, "right", self.user_avatar)
             self.entry_var.set("")
             self.get_response(user_message)
 
@@ -87,45 +106,42 @@ class ChatbotApp:
             responses = self.db.get_documents_by_tag("responses", tag)
             if responses:
                 response = responses[0].get("responses", ["Sorry, I don't understand."])[0]
-                self.display_message("Bot", response, self.bot_color, "left")
+                self.display_message("Bot", response, self.bot_color, "left", self.bot_avatar)
             else:
-                self.display_message("Bot", "Sorry, I don't understand.", self.bot_color, "left")
+                self.display_message("Bot", "Sorry, I don't understand.", self.bot_color, "left", self.bot_avatar)
         else:
-            self.display_message("Bot", "Sorry, I don't understand.", self.bot_color, "left")
+            self.display_message("Bot", "Sorry, I don't understand.", self.bot_color, "left", self.bot_avatar)
 
-    def display_message(self, sender, message, color, align):
-        self.chat_area.config(state=tk.NORMAL)
+    def display_message(self, sender, message, color, align, icon):
         timestamp = datetime.datetime.now().strftime("%H:%M")
 
-        if align == "right":
-            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
-            message_frame = tk.Frame(self.chat_area, bg="white")
-            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
-                                     wraplength=250, justify='left', anchor='e')
-            avatar_label = tk.Label(message_frame, image=self.user_avatar, bg="white")
-
-            message_frame.pack(side=tk.RIGHT, anchor='e')
-            message_label.pack(side=tk.RIGHT, padx=5, pady=5)
-            avatar_label.pack(side=tk.RIGHT, padx=5, pady=5)
-            self.chat_area.window_create(tk.END, window=message_frame)
-            self.chat_area.insert(tk.END, f"\n{timestamp:>60}\n", f"{sender}_timestamp")
-            self.chat_area.tag_config(f"{sender}_timestamp", justify='right', font=("Helvetica", 10))
-
+        message_frame = tk.Frame(self.scrollable_frame, bg="white")
+        if align == "left":
+            message_frame.pack(pady=5, padx=10, anchor="w")
         else:
-            self.chat_area.insert(tk.END, f"\n", f"{sender}_header")
-            message_frame = tk.Frame(self.chat_area, bg="white")
-            avatar_label = tk.Label(message_frame, image=self.bot_avatar, bg="white")
-            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 14),
-                                     wraplength=250, justify='left')
+            message_frame.pack(pady=5, padx=10, anchor="e")
 
-            avatar_label.pack(side=tk.LEFT, padx=5, pady=5)
-            message_label.pack(side=tk.LEFT, padx=5, pady=5)
-            self.chat_area.window_create(tk.END, window=message_frame)
-            self.chat_area.insert(tk.END, f"\n{timestamp}\n", f"{sender}_timestamp")
-            self.chat_area.tag_config(f"{sender}_timestamp", font=("Helvetica", 10))
+        if align == "right":
+            avatar_label = tk.Label(message_frame, image=icon, bg="white")
+            avatar_label.pack(side="right", anchor="e")
+            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 12),
+                                     wraplength=200, justify='right')
+            message_label.pack(side="right", padx=5, anchor="e")
+            timestamp_label = tk.Label(message_frame, text=timestamp, font=("Helvetica", 8), bg="white",
+                                       fg=self.text_color)
+            timestamp_label.pack(side="right", padx=5, anchor="e")
+        else:
+            avatar_label = tk.Label(message_frame, image=icon, bg="white")
+            avatar_label.pack(side=tk.LEFT, anchor="w")
+            message_label = tk.Label(message_frame, text=message, bg=color, fg=self.text_color, font=("Helvetica", 12),
+                                     wraplength=200, justify='left')
+            message_label.pack(side=tk.LEFT, padx=(5, 5), anchor="w")
+            timestamp_label = tk.Label(message_frame, text=timestamp, font=("Helvetica", 8), bg="white",
+                                       fg=self.text_color)
+            timestamp_label.pack(side=tk.LEFT, padx=(5, 5), anchor="w")
 
-        self.chat_area.config(state=tk.DISABLED)
-        self.chat_area.yview(tk.END)
+        self.canvas.update_idletasks()
+        self.canvas.yview_moveto(1)
 
     def center_window(self, width, height):
         screen_width = self.root.winfo_screenwidth()
