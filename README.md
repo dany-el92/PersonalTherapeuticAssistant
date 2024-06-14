@@ -43,7 +43,7 @@ Se Python non è installato, fai riferimento alla guida ufficiale [Python Guide]
 
 Per clonare questo repository, scarica ed estrai i file del progetto `.zip` usando il pulsante `<Code>` in alto a destra o esegui il seguente comando nel tuo terminale:
 ```shell 
-git clone <URL>
+git clone https://github.com/dany-el92/progettoBD2.git
 ```
 
 
