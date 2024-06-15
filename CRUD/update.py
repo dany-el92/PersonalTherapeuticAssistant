@@ -88,7 +88,7 @@ def update_screen(frame, show_main_frame):
             tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
             global tag_entry
-            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
             tag_entry.focus_set()
             tag_entry.icursor(0)
@@ -129,7 +129,7 @@ def update_screen(frame, show_main_frame):
             old_tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
             global old_tag_entry
-            old_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            old_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             old_tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
             old_tag_entry.focus_set()
             old_tag_entry.icursor(0)
@@ -140,7 +140,7 @@ def update_screen(frame, show_main_frame):
             new_tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
             global new_tag_entry
-            new_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            new_tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             new_tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
             new_tag_entry.focus_set()
             new_tag_entry.icursor(0)
@@ -188,7 +188,7 @@ def update_screen(frame, show_main_frame):
                 entry_frame = tk.Frame(result_frame, bg="#2C3E50")
                 entry_frame.pack(side='top', padx=(90, 0), anchor='w')
 
-                entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black")
+                entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black", insertbackground="black")
                 entry.pack(side='left',pady=0, ipady=5, padx=1)
 
             add_button = tk.Button(result_frame, text="+", command=lambda: add_new_entry(result_frame, v_checkbox),
@@ -202,7 +202,7 @@ def update_screen(frame, show_main_frame):
         entry_frame = tk.Frame(result_frame, bg="#2C3E50")
         entry_frame.pack(side='top', padx=(90, 0), anchor='w')
 
-        entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black")
+        entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black", insertbackground="black")
         entry.pack(side='left', fill='x', expand=True)
 
     def update_tag(old_tag, new_tag, collection_var):

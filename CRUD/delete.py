@@ -93,7 +93,7 @@ def delete_screen(frame, show_main_frame):
             tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
             tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
-            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
         elif selection == "3": # Elimina un singolo elemento da un documento
@@ -112,7 +112,7 @@ def delete_screen(frame, show_main_frame):
             tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
             tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
-            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10)
+            tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
             search_button = tk.Button(content_frame, text="Search",

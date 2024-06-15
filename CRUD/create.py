@@ -53,7 +53,7 @@ def create_screen(frame, show_main_frame):
     tag_label = tk.Label(inner_content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
     tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
-    tag_entry = tk.Entry(inner_content_frame, bg="white", fg="black", width=10)
+    tag_entry = tk.Entry(inner_content_frame, bg="white", fg="black", width=10, insertbackground="black")
     tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Descrizione
@@ -63,7 +63,7 @@ def create_screen(frame, show_main_frame):
     description_frame = tk.Frame(inner_content_frame, bg="#2C3E50")
     description_frame.pack(side='top', fill='x')
 
-    description_text = tk.Text(description_frame, height=3, width=40, bg="white", fg="black")
+    description_text = tk.Text(description_frame, height=3, width=40, bg="white", fg="black", insertbackground="black")
     description_text.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Lista di caselle di testo per la descrizione
@@ -106,7 +106,7 @@ def create_screen(frame, show_main_frame):
 
 def add_description_box(description_frame, description_boxes):
     # Aggiungi una nuova casella di testo per la descrizione
-    additional_description_text = tk.Text(description_frame, height=3, width=20, bg="white", fg="black")
+    additional_description_text = tk.Text(description_frame, height=3, width=20, bg="white", fg="black", insertbackground="black")
     additional_description_text.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
     # Aggiungi la nuova casella di testo alla lista
