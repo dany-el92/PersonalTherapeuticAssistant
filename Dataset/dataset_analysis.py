@@ -18,9 +18,11 @@ for idx, row in df.iterrows():
     patterns = row['patterns']
     responses = row['responses']
     for pattern in patterns:
+        # Associa ogni pattern a una singola risposta casualmente
+        response = responses[idx % len(responses)]  # Scelgo la risposta in base all'indice
         expanded_data['tag'].append(tag)
         expanded_data['pattern'].append(pattern)
-        expanded_data['response'].append(responses)
+        expanded_data['response'].append(response)
 
 expanded_df = pd.DataFrame.from_dict(expanded_data)
 
@@ -28,25 +30,13 @@ expanded_df = pd.DataFrame.from_dict(expanded_data)
 print(expanded_df.head())
 
 # Statistiche aggiuntive e grafici
-
-print("---------------------------------------------------------------------------------------------------------")
-
 print("INFO")
 expanded_df.info()
-
-print("---------------------------------------------------------------------------------------------------------")
-
-statistiche = expanded_df.describe(include='all')
-print(f"STATISTICHE:\n{statistiche}")
-
-print("---------------------------------------------------------------------------------------------------------")
 
 # Intenti unici nel dataset
 print("Intenti unici nel dataset:")
 print(expanded_df['tag'].unique())
 print(f"Numero totale di intenti unici nel dataset: {len(expanded_df['tag'].unique())}")
-
-print("---------------------------------------------------------------------------------------------------------")
 
 # Grafico 1: Distribuzione degli Intenti
 intent_counts = expanded_df['tag'].value_counts()
