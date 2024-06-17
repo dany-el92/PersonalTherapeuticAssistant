@@ -170,7 +170,7 @@ def delete_screen(frame, show_main_frame):
                                     offvalue="", bg="#2C3E50", fg="white", selectcolor="#2C3E50")
                 cb.pack(side='top', padx=(90, 0), anchor='w')
         else:
-            messagebox.showinfo("Error", f"An error occurred: {error}")
+            messagebox.showinfo("Error", f"Tag not inserted or tag not present in the collection selected!")
 
     for (text, value) in values.items():
         rb = Radiobutton(inner_content_frame, text=text, variable=v_radio, value=value)
@@ -268,4 +268,4 @@ def delete_data(v_radio, collection_var, tag_entry, v_checkbox, content_frame, r
         messagebox.showinfo("Success", "Data deleted successfully")
         reset_screen(v_radio, collection_var, content_frame, result_frame)
     else:
-        messagebox.showinfo("Error", f"An error occurred: {error}")
+        messagebox.showinfo("Error", f"Tag not inserted or tag not present in the collection selected!")

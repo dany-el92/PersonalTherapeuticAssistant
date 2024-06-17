@@ -340,7 +340,7 @@ class Database:
                 matching_words = [word for word in words if word in pattern_words]
                 percentage = len(matching_words) / len(words) * 100
 
-                if percentage >= 90:
+                if percentage >= 70:
                     return document["tag"]
 
             return None
