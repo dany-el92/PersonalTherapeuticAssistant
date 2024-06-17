@@ -4,6 +4,7 @@ from operazioni_db.db_operations import Database
 from tkinter import *
 import platform
 
+
 def delete_screen(frame, show_main_frame):
     frame.configure(bg="#2C3E50")
 
@@ -39,19 +40,19 @@ def delete_screen(frame, show_main_frame):
     scrollbar.config(command=canvas.yview, orient="vertical")
 
     # Opzioni di cancellazione
-    options_label = tk.Label(inner_content_frame, text="Deletion options", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+    options_label = tk.Label(inner_content_frame, text="Deletion options", bg="#2C3E50", fg="#f9c686",
+                             font=("Helvetica", 16))
     options_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
     values = {"Delete all documents in a collection": "1",
               "Delete a document": "2",
               "Delete a single element from a document": "3"}
 
-    v_radio = tk.StringVar(inner_content_frame) # Variabile per memorizzare il valore selezionato
-    v_checkbox = [] # Variabile per memorizzare il valore selezionato
+    v_radio = tk.StringVar(inner_content_frame)  # Variabile per memorizzare il valore selezionato
+    v_checkbox = []  # Variabile per memorizzare il valore selezionato
 
     collection_var = tk.StringVar(inner_content_frame)
     collection_var.set("patterns")  # valore predefinito
-
 
     # Funzione di callback per aggiornare il contenuto in base alla selezione
     def update_content(*args):
@@ -63,23 +64,25 @@ def delete_screen(frame, show_main_frame):
 
         selection = v_radio.get()
 
-        if selection == "1": # Elimina tutti i documenti di una collezione
+        if selection == "1":  # Elimina tutti i documenti di una collezione
             # Collezione
-            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686",
+                                        font=("Helvetica", 16))
             collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
             collection_var = tk.StringVar(content_frame)
             collection_var.set("patterns")  # valore predefinito
 
             collection_options = tk.OptionMenu(content_frame, collection_var, "patterns", "responses")
-            collection_options.config(width=10,  bg="white", fg="black")  # Imposta la larghezza del menu a tendina
+            collection_options.config(width=10, bg="white", fg="black")  # Imposta la larghezza del menu a tendina
             collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
             tag_entry = None
 
-        elif selection == "2": # Elimina un documento
+        elif selection == "2":  # Elimina un documento
             # Collezione
-            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686",
+                                        font=("Helvetica", 16))
             collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
             collection_var = tk.StringVar(content_frame)
@@ -90,15 +93,17 @@ def delete_screen(frame, show_main_frame):
             collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
             # Tag
-            tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
+            tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+                                 width=10)
             tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
             tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
             tag_entry.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
-        elif selection == "3": # Elimina un singolo elemento da un documento
+        elif selection == "3":  # Elimina un singolo elemento da un documento
             # Collezione
-            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+            collection_label = tk.Label(content_frame, text="Collection", bg="#2C3E50", fg="#f9c686",
+                                        font=("Helvetica", 16))
             collection_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
             collection_var = tk.StringVar(content_frame)
@@ -109,7 +114,8 @@ def delete_screen(frame, show_main_frame):
             collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
             # Tag
-            tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16), width=10)
+            tag_label = tk.Label(content_frame, text="Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+                                 width=10)
             tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
             tag_entry = tk.Entry(content_frame, bg="white", fg="black", width=10, insertbackground="black")
@@ -124,7 +130,8 @@ def delete_screen(frame, show_main_frame):
         button_frame.pack(side='top', fill='x', padx=(90, 0))
 
         delete_button = tk.Button(button_frame, text="Delete",
-                                  command=lambda: delete_data(v_radio, collection_var, tag_entry, v_checkbox, content_frame, result_frame),
+                                  command=lambda: delete_data(v_radio, collection_var, tag_entry, v_checkbox,
+                                                              content_frame, result_frame),
                                   bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
         delete_button.pack(side='right')
 
@@ -151,7 +158,8 @@ def delete_screen(frame, show_main_frame):
             success = False
 
         if success:
-            cb_label = tk.Label(result_frame, text="Select elements to delete", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16))
+            cb_label = tk.Label(result_frame, text="Select elements to delete", bg="#2C3E50", fg="#f9c686",
+                                font=("Helvetica", 16))
             cb_label.pack(side='top', pady=(0, 5), padx=(90, 0))
 
             for element in elements:
@@ -163,7 +171,6 @@ def delete_screen(frame, show_main_frame):
                 cb.pack(side='top', padx=(90, 0), anchor='w')
         else:
             messagebox.showinfo("Error", f"An error occurred: {error}")
-
 
     for (text, value) in values.items():
         rb = Radiobutton(inner_content_frame, text=text, variable=v_radio, value=value)
@@ -191,7 +198,7 @@ def delete_screen(frame, show_main_frame):
 
     back_button = tk.Button(frame, text="⬅", **back_button_options,
                             command=lambda: [reset_screen(v_radio, collection_var, content_frame, result_frame),
-                            show_main_frame()])
+                                             show_main_frame()])
     back_button.place(x=5, y=5)
 
     # Abilita lo scorrimento del canvas con il touchpad
@@ -199,6 +206,7 @@ def delete_screen(frame, show_main_frame):
         canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int((event.delta / 120) * 2), "units"))
     elif platform.system() == 'Darwin':
         canvas.bind_all("<MouseWheel>", lambda event: canvas.yview_scroll(-1 * int(event.delta), "units"))
+
 
 def reset_screen(v_radio, category_var, content_frame, result_frame):
     # Resetta la selezione del RadioButton
@@ -211,6 +219,7 @@ def reset_screen(v_radio, category_var, content_frame, result_frame):
     for frame in (content_frame, result_frame):
         for widget in frame.winfo_children():
             widget.destroy()
+
 
 def delete_data(v_radio, collection_var, tag_entry, v_checkbox, content_frame, result_frame):
     db = Database()
@@ -260,4 +269,3 @@ def delete_data(v_radio, collection_var, tag_entry, v_checkbox, content_frame, r
         reset_screen(v_radio, collection_var, content_frame, result_frame)
     else:
         messagebox.showinfo("Error", f"An error occurred: {error}")
-

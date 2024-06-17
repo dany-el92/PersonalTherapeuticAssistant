@@ -12,6 +12,7 @@ old_tag_entry = None
 global new_tag_entry
 new_tag_entry = None
 
+
 def update_screen(frame, show_main_frame):
     if show_main_frame is None or not callable(show_main_frame):
         raise ValueError("show_main_frame must be a valid function")
@@ -124,7 +125,8 @@ def update_screen(frame, show_main_frame):
             collection_options.pack(side='top', fill='x', pady=(0, 10), padx=(90, 0))
 
             # Tag attuale
-            old_tag_label = tk.Label(content_frame, text="Current Tag", bg="#2C3E50", fg="#f9c686", font=("Helvetica", 16),
+            old_tag_label = tk.Label(content_frame, text="Current Tag", bg="#2C3E50", fg="#f9c686",
+                                     font=("Helvetica", 16),
                                      width=10)
             old_tag_label.pack(side='top', fill='x', pady=(0, 5), padx=(90, 0))
 
@@ -146,8 +148,10 @@ def update_screen(frame, show_main_frame):
             new_tag_entry.icursor(0)
 
             update_tag_button = tk.Button(content_frame, text="Update Tag",
-                                          command=lambda: update_tag(old_tag_entry.get(), new_tag_entry.get(), collection_var.get()),
-                                          bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
+                                          command=lambda: update_tag(old_tag_entry.get(), new_tag_entry.get(),
+                                                                     collection_var.get()),
+                                          bg="#2C3E50", fg="black", bd=0, highlightthickness=0,
+                                          activebackground="#2C3E50")
             update_tag_button.pack(side='top', pady=(10, 5))
 
     v_radio.trace("w", update_content)  # Associa la funzione di callback alla variabile v_radio
@@ -189,7 +193,7 @@ def update_screen(frame, show_main_frame):
                 entry_frame.pack(side='top', padx=(90, 0), anchor='w')
 
                 entry = tk.Entry(entry_frame, textvariable=entry_var, bg="white", fg="black", insertbackground="black")
-                entry.pack(side='left',pady=0, ipady=5, padx=1)
+                entry.pack(side='left', pady=0, ipady=5, padx=1)
 
             add_button = tk.Button(result_frame, text="+", command=lambda: add_new_entry(result_frame, v_checkbox),
                                    bg="#2C3E50", fg="black", bd=0, highlightthickness=0, activebackground="#2C3E50")
@@ -281,6 +285,7 @@ def reset_screen(collection_var, tag_entry, result_frame, v_checkbox):
     # Imposta tutte le checkbox come unchecked
     for checkbox in v_checkbox:
         checkbox.set("")
+
 
 def update_data(collection_var, v_checkbox, result_frame):
     db = Database()

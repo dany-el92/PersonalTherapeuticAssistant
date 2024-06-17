@@ -103,7 +103,7 @@ class ChatbotApp:
     def get_response(self, user_message):
         tag = self.db.text_search(user_message, "patterns")
         if tag:
-            responses = self.db.get_documents_by_tag("responses", tag)
+            responses = self.db.get_documents_by_tag_covered("responses", tag)
             if responses:
                 response = responses[0].get("responses", ["Sorry, I don't understand."])[0]
                 self.display_message("Bot", response, self.bot_color, "left", self.bot_avatar)
