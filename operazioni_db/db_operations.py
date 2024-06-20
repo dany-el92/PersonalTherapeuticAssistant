@@ -36,7 +36,8 @@ class Database:
 
     def create_indexes(self):
         """
-        Crea indici sulle collezioni per migliorare le prestazioni delle query.
+        Crea indici composti utilizzando un ordine crescente (1)
+        sulle collezioni per migliorare le prestazioni delle query.
         """
         try:
             self.db['patterns'].create_index([('tag', 1), ('patterns', 1)])
