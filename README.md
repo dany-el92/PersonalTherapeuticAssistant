@@ -13,9 +13,10 @@
    - [Installazione di Python](#installazione-python)
    - [Clonazione del repository](#clonazione-del-repository)
    - [Installazione dei Requirements](#installazione-requirements)
-<!--5. [Utilizzo](#utilizzo)
+5. [Utilizzo](#utilizzo)
+   - [Creazione del DB](#creazione-DB)
    - [Chatbot](#chatbot)
-   - [Operazioni CRUD](#operazioni-crud)-->
+   - [Operazioni CRUD](#operazioni-crud)
 
 # Introduzione
 
@@ -57,17 +58,31 @@ Installa i requisiti del progetto utilizzando il seguente comando nel tuo termin
 pip install -r requirements.txt
 ```
 
-<!--# Utilizzo
-<b>Chatbot</b>
+# Utilizzo
 
-Per avviare il chatbot, eseguire:
-```shell 
+## Creazione del Database
+
+1. **Installazione di MongoDB:**
+   - Scarica e installa MongoDB dal [sito ufficiale](https://www.mongodb.com/try/download/community).
+   - (Opzionale) Installa MongoDB Compass per una gestione grafica del database.
+
+2. **Avvio di MongoDB:**
+   - Avvia MongoDB utilizzando il comando appropriato per il tuo sistema operativo.
+
+3. **Creazione del Database:**
+   - Esegui il notebook `operazionidb/creazioneDB.ipynb` per creare e configurare il database.
+
+## Chatbot
+
+Per avviare il chatbot, esegui il seguente comando nel terminale:
+
+```shell
 python chatbot/main.py
 ```
-<b>Operazioni CRUD</b>
+
+## Operazioni CRUD
 
 Le operazioni CRUD possono essere eseguite utilizzando il seguente comando nel tuo terminale:
 ```shell 
 python CRUD/home.py
 ```
--->
